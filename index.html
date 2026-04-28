@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#050e1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="My Routine">
+<meta name="description" content="Daily Islamic & Fitness Routine Tracker">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" href="icons/icon-192.png">
+<title>My Routine • My Purpose</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- SPLASH -->
+  <div id="splash">
+    <div class="splash-inner">
+      <div class="splash-arabic">وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ</div>
+      <div class="splash-title">MY ROUTINE</div>
+      <div class="splash-dot">•</div>
+      <div class="splash-title">MY PURPOSE</div>
+      <div class="splash-sub">Consistency &gt; Motivation</div>
+    </div>
+  </div>
+
+  <!-- TOP BAR -->
+  <header class="topbar" id="topbar">
+    <button class="topbar-btn" id="prevBtn" onclick="changeDay(-1)" aria-label="Previous day">&#8592;</button>
+    <div class="topbar-center" onclick="goToday()">
+      <div class="topbar-date" id="topbarDate">Loading...</div>
+      <div class="topbar-hijri" id="topbarHijri"></div>
+    </div>
+    <button class="topbar-btn" id="nextBtn" onclick="changeDay(1)" aria-label="Next day">&#8594;</button>
+  </header>
+
+  <!-- PROGRESS STRIP -->
+  <div class="progress-strip" id="progressStrip">
+    <div class="ps-item">
+      <span class="ps-val" id="psSalah">0/5</span>
+      <span class="ps-lbl">Salah</span>
+    </div>
+    <div class="ps-divider"></div>
+    <div class="ps-item">
+      <span class="ps-val" id="psHabits">0/14</span>
+      <span class="ps-lbl">Habits</span>
+    </div>
+    <div class="ps-divider"></div>
+    <div class="ps-item">
+      <span class="ps-val" id="psWeight">85kg</span>
+      <span class="ps-lbl">Weight</span>
+    </div>
+    <div class="ps-divider"></div>
+    <div class="ps-item">
+      <span class="ps-val" id="psStreak">0</span>
+      <span class="ps-lbl">Streak</span>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content" id="mainContent">
+
+    <!-- PRAYERS TAB -->
+    <section class="tab-panel active" id="tab-prayers">
+      <div class="section-hdr">
+        <span class="section-icon">🕌</span>
+        <span>Daily Prayers</span>
+        <span class="section-hint">Tap to mark</span>
+      </div>
+      <div class="prayers-grid" id="prayersGrid"></div>
+      <div class="card" style="margin-top:12px">
+        <div class="card-label">Prayer notes</div>
+        <textarea class="textarea" id="prayerNotes" placeholder="Notes about today's prayers..." rows="3" oninput="autoSave()"></textarea>
+      </div>
+    </section>
+
+    <!-- SCHEDULE TAB -->
+    <section class="tab-panel" id="tab-schedule">
+      <div class="section-hdr">
+        <span class="section-icon">⏰</span>
+        <span>Daily Schedule</span>
+      </div>
+      <div class="timeline" id="timelineList"></div>
+    </section>
+
+    <!-- HABITS TAB -->
+    <section class="tab-panel" id="tab-habits">
+      <div class="section-hdr">
+        <span class="section-icon">✅</span>
+        <span>Habit Tracker</span>
+        <span class="section-hint">Last 7 days</span>
+      </div>
+      <div id="habitsContent"></div>
+    </section>
+
+    <!-- WRAPUP TAB -->
+    <section class="tab-panel" id="tab-wrapup">
+      <div class="section-hdr">
+        <span class="section-icon">📋</span>
+        <span>Daily Wrapup</span>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Did I follow my Deen today?</div>
+        <div class="btn-row">
+          <button class="choice-btn" id="deenYes" onclick="setDeen('yes')">✔ Yes</button>
+          <button class="choice-btn" id="deenNo" onclick="setDeen('no')">✕ No</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Study effectiveness (rate 1–10)</div>
+        <div class="rate-grid" id="studyRateGrid"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">What will I improve tomorrow?</div>
+        <textarea class="textarea" id="improveText" placeholder="1 thing to improve..." rows="2" oninput="autoSave()"></textarea>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Reflection / Journal</div>
+        <textarea class="textarea" id="journalText" placeholder="Gratitude, thoughts, reflections..." rows="5" oninput="autoSave()"></textarea>
+      </div>
+
+      <button class="save-btn" onclick="saveDay()">Save Day ✔</button>
+      <div class="saved-toast" id="savedToast">Saved!</div>
+    </section>
+
+    <!-- PROGRESS TAB -->
+    <section class="tab-panel" id="tab-progress">
+      <div class="section-hdr">
+        <span class="section-icon">💪</span>
+        <span>Progress</span>
+      </div>
+
+      <div class="stats-grid" id="statsGrid"></div>
+
+      <div class="card">
+        <div class="card-label">Weight Log &nbsp;<span style="font-size:11px;opacity:0.6">85kg → 70kg goal</span></div>
+        <div class="weight-goal-bar" id="weightGoalBar"></div>
+        <div class="weight-entry-row">
+          <input type="number" id="weightInput" class="weight-input" placeholder="Enter kg" step="0.1" min="40" max="200">
+          <button class="log-btn" onclick="logWeight()">Log</button>
+        </div>
+        <div class="weight-log" id="weightLog"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Salah streak (last 30 days)</div>
+        <div class="streak-dots" id="streakDots"></div>
+      </div>
+    </section>
+
+    <!-- WEEKLY TAB -->
+    <section class="tab-panel" id="tab-weekly">
+      <div class="section-hdr">
+        <span class="section-icon">📅</span>
+        <span>Weekly Plan</span>
+      </div>
+      <div id="weeklyContent"></div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="nav-btn active" onclick="switchTab('prayers')" aria-label="Prayers">
+      <span class="nav-icon">🕌</span>
+      <span class="nav-label">Prayers</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('schedule')" aria-label="Schedule">
+      <span class="nav-icon">⏰</span>
+      <span class="nav-label">Schedule</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('habits')" aria-label="Habits">
+      <span class="nav-icon">✅</span>
+      <span class="nav-label">Habits</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('wrapup')" aria-label="Wrapup">
+      <span class="nav-icon">📋</span>
+      <span class="nav-label">Wrapup</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('progress')" aria-label="Progress">
+      <span class="nav-icon">💪</span>
+      <span class="nav-label">Progress</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('weekly')" aria-label="Weekly">
+      <span class="nav-icon">📅</span>
+      <span class="nav-label">Weekly</span>
+    </button>
+  </nav>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
